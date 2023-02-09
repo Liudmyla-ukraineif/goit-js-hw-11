@@ -9,14 +9,14 @@ export default class InfoBySearch {
   constructor() {
     this.searchQuery = '';
     this.page = 1;
+  
   }
 
   async fetchSearch() {
 
-    const data = await axios.get(`${BASE_URL}?key=${API_KEY}&q=${this.searchQuery}&min_height=100&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.page}`);
+    const { data } = await axios.get(`${BASE_URL}?key=${API_KEY}&q=${this.searchQuery}&min_height=100&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.page}`);
 
     this.increment();
-
     return data;
   }
 

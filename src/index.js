@@ -22,32 +22,45 @@ function onSearch(e) {
   newSearchInfo.query = e.currentTarget.elements.searchQuery.value.trim();
 
   if (newSearchInfo.query === '') {
-    refs.loadMoreBtn.classList.add('is-hidden');
     clearConteiner();
     return errorMeseges();
   }
 
   newSearchInfo.resetPage();
-  newSearchInfo.fetchSearch().then(data => {
-    clearConteiner()
-    refs.loadMoreBtn.classList.remove('is-hidden')
-    refs.loadMoreBtn.classList.add('disabled')
-    appendMarkup(data)
-  });
+
+  try {
+    newSearchInfo.fetchSearch().then(data => {
+      clearConteiner();
+      refs.loadMoreBtn.classList.remove('is-hidden');
+      // refs.loadMoreBtn.disabled = true;
+      // if (hits.length === 0) {
+      //   return Notiflix.Notify.failure(`We're sorry, but you've reached the end of search results.`)
+      // }
+      
+      appendMarkup(data);
+    })
+  } catch (error) {
+    errorMeseges()
+  }
 }
 
 function onMoreElements() {
-  newSearchInfo.fetchSearch().then(appendMarkup)
+  refs.loadMoreBtn.disabled = false;
+  newSearchInfo.fetchSearch().then(appendMarkup);
+  refs.loadMoreBtn.disabled = true;
 }
 
-function appendMarkup(data) {
-  refs.gallery.insertAdjacentHTML('beforeend', cardSearch(data.hits));
-  refs.loadMoreBtn.classList.remove('disabled');
-  Notiflix.Notify.info(`Hooray! We found ${data.totalHits} images.`)
+function appendMarkup({ hits, totalHits }) {
+  refs.loadMoreBtn.disabled = true;
+  refs.gallery.insertAdjacentHTML('beforeend', cardSearch(hits));
+
+  Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`)
+  refs.loadMoreBtn.disabled = false;
 }
 
 function clearConteiner() {
   refs.gallery.innerHTML = '';
+  refs.loadMoreBtn.classList.add('is-hidden');
 }
 
 function errorMeseges() {
